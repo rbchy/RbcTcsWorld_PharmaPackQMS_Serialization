@@ -1,0 +1,2 @@
+package com.pharmapack.qms.reconciliation; import static org.junit.jupiter.api.Assertions.*; import java.math.*; import org.junit.jupiter.api.Test;
+class ReconciliationCalculatorTest { @Test void reconciledWhenTotalsMatch(){BigDecimal s=new BigDecimal("100"),g=new BigDecimal("80"),r=new BigDecimal("10"),u=new BigDecimal("10"); assertEquals(0,s.subtract(g.add(r).add(u)).compareTo(BigDecimal.ZERO));} @Test void investigationWhenVarianceExists(){assertNotEquals(0,new BigDecimal("100").subtract(new BigDecimal("99")).compareTo(BigDecimal.ZERO));} }

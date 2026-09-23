@@ -1,0 +1,155 @@
+:root {
+  font-family: Inter, Arial, sans-serif;
+  background: #f4f7fb;
+  color: #182230;
+  --brand-1: #ff6b6b;
+  --brand-2: #ffd93d;
+  --brand-3: #6bcB77;
+  --brand-4: #4d96ff;
+  --brand-5: #9b5de5;
+  --ink: #123b63;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+/* ===================== Watercolor multicolor banner ===================== */
+/* Layered, blurred radial-gradient "blobs" give a soft hand-painted watercolor
+   look without needing an external image asset - fully self-contained CSS. */
+.watercolor-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fdfbfb 0%, #f5f3ff 100%);
+  isolation: isolate;
+}
+.watercolor-banner::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(circle at 15% 25%, var(--brand-1) 0%, transparent 42%),
+    radial-gradient(circle at 80% 15%, var(--brand-4) 0%, transparent 45%),
+    radial-gradient(circle at 55% 70%, var(--brand-3) 0%, transparent 48%),
+    radial-gradient(circle at 90% 80%, var(--brand-5) 0%, transparent 40%),
+    radial-gradient(circle at 30% 85%, var(--brand-2) 0%, transparent 42%);
+  filter: blur(38px) saturate(135%);
+  opacity: 0.65;
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+.watercolor-banner__content {
+  position: relative;
+  z-index: 1;
+  padding: 36px 6% 30px;
+  text-align: center;
+  color: var(--ink);
+}
+.watercolor-banner__content h1 {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 0 #ffffffcc;
+}
+.watercolor-banner__content p {
+  margin: 6px 0 0;
+  font-size: 15px;
+  opacity: 0.85;
+}
+.watercolor-banner--compact .watercolor-banner__content { padding: 18px 6% 16px; text-align: left; }
+.watercolor-banner--compact .watercolor-banner__content h1 { font-size: 22px; }
+
+/* ===================== Login screen ===================== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #eef2f9;
+}
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 34px #12325a22;
+  overflow: hidden;
+}
+.login-card__body { padding: 28px 30px 30px; }
+.login-card__body h2 { margin: 0 0 4px; }
+.login-card__body p.subtitle { margin: 0 0 20px; color: #5c6c80; font-size: 14px; }
+.login-form { display: flex; flex-direction: column; gap: 14px; }
+.login-form label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 14px; }
+.login-form input { padding: 11px 12px; border: 1px solid #c8d2df; border-radius: 8px; font-size: 15px; }
+.login-form input:focus { outline: 2px solid var(--brand-4); border-color: transparent; }
+.login-error { padding: 10px 12px; background: #fdecec; color: #a11; border: 1px solid #f3b8b8; border-radius: 8px; font-size: 13px; }
+.login-hint { margin-top: 16px; padding: 12px; background: #f4f7fb; border-radius: 8px; font-size: 12.5px; color: #536; line-height: 1.6; }
+.btn-icon { display: inline-flex; align-items: center; gap: 8px; }
+.btn-icon svg { flex: none; }
+
+/* ===================== Top bar (Home / Help / User) ===================== */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 14px;
+}
+.topbar__left { display: flex; gap: 8px; flex-wrap: wrap; }
+.topbar__right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.chip-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1px solid #c8d2df; background: white; color: var(--ink);
+  padding: 8px 13px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 13.5px;
+}
+.chip-btn:hover { background: #eef3fa; }
+.chip-btn.home { border-color: var(--brand-4); color: var(--brand-4); }
+.chip-btn.help { border-color: var(--brand-5); color: var(--brand-5); }
+.chip-btn.logout { border-color: var(--brand-1); color: var(--brand-1); }
+.user-pill { display: flex; align-items: center; gap: 8px; background: #eef3fa; padding: 6px 12px; border-radius: 999px; font-size: 13px; }
+.user-pill strong { font-size: 13px; }
+.role-badge { background: var(--ink); color: white; font-size: 10.5px; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* ===================== Help popover ===================== */
+.help-popover {
+  position: fixed; inset: 0; background: #12203099; display: flex; align-items: center; justify-content: center; z-index: 50; padding: 20px;
+}
+.help-popover__card { background: white; border-radius: 14px; max-width: 480px; width: 100%; padding: 22px 24px; max-height: 80vh; overflow-y: auto; }
+.help-popover__card h3 { margin-top: 0; }
+.lang-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.lang-tabs button { border: 1px solid #c8d2df; background: #f4f7fb; padding: 6px 11px; border-radius: 999px; cursor: pointer; font-size: 12.5px; }
+.lang-tabs button.active { background: var(--ink); color: white; border-color: var(--ink); }
+.help-popover__close { float: right; border: 0; background: #edf2f7; border-radius: 999px; width: 30px; height: 30px; cursor: pointer; font-size: 15px; }
+
+/* ===================== App shell ===================== */
+header { background: var(--ink); color: white; padding: 0; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 6%; background: white; border-bottom: 1px solid #dbe3ec; }
+nav button { display: inline-flex; align-items: center; gap: 7px; border: 0; background: #edf2f7; padding: 9px 14px; border-radius: 7px; cursor: pointer; font-size: 13.5px; font-weight: 600; }
+nav button.active { background: var(--ink); color: white; }
+main { max-width: 1200px; margin: 0 auto 24px; padding: 0 20px; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.cards div, .panel { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px #00000010; }
+.cards strong { display: block; font-size: 24px; margin-top: 8px; }
+.form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; background: white; padding: 20px; border-radius: 10px; }
+.form label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
+.form input, .form select { padding: 10px; border: 1px solid #c8d2df; border-radius: 6px; }
+.form input:invalid, .form input.field-invalid, .form select.field-invalid { border-color: var(--brand-1); background: #fff5f5; }
+.field-error { grid-column: 1 / -1; color: #b23; font-size: 12.5px; margin-top: -8px; }
+.primary { grid-column: 1 / -1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: var(--ink); color: white; border: 0; border-radius: 7px; cursor: pointer; font-size: 14.5px; font-weight: 600; }
+.notice { padding: 12px; background: #fff4cc; border: 1px solid #e5cc70; margin-bottom: 16px; border-radius: 7px; }
+.notice.error { background: #fdecec; border-color: #f3b8b8; }
+table { width: 100%; margin-top: 18px; border-collapse: collapse; background: white; }
+td { padding: 10px; border-bottom: 1px solid #e5eaf0; }
+@media (max-width: 800px) {
+  .cards, .form { grid-template-columns: 1fr; }
+  .topbar { flex-direction: column; align-items: stretch; }
+}
+
+/* Phase 4 - Systech-inspired packaging line dashboard */
+.dashboard-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:12px 0; }
+.dashboard-grid .card { min-height:72px; }
+.status { margin-top:8px; font-weight:700; }
+.toolbar { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 20px; }
+@media (max-width: 900px) { .dashboard-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width: 560px) { .dashboard-grid { grid-template-columns:1fr; } }

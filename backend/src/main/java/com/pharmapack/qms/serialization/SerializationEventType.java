@@ -1,0 +1,7 @@
+package com.pharmapack.qms.serialization;
+
+public enum SerializationEventType {
+    CREATED, PRINTED, VISION_VERIFIED, COMMISSIONED, REJECTED,
+    REWORK_STARTED, REWORK_PASSED, REWORK_FAILED,
+    DECOMMISSIONED, AGGREGATED, SHIPPED
+}

@@ -1,0 +1,2 @@
+package com.pharmapack.qms.production; import jakarta.persistence.*; import lombok.*; import java.math.*; import java.time.*;
+@Entity @Table(name="production_entries") @Getter @Setter @NoArgsConstructor public class ProductionEntry { @Id @GeneratedValue(strategy=GenerationType.IDENTITY) Long id; @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="production_run_id") ProductionRun productionRun; LocalDateTime entryTime; BigDecimal quantityProduced=BigDecimal.ZERO,quantityGood=BigDecimal.ZERO,quantityReject=BigDecimal.ZERO; Long operatorId; String remarks; }

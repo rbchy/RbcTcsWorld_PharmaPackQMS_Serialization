@@ -1,0 +1,2 @@
+package com.pharmapack.qms.reconciliation; import java.math.BigDecimal; import java.time.LocalDateTime;
+public record ReconciliationResponse(Long id,Long batchId,String batchNumber,String productCode,String productName,BigDecimal startingQuantity,BigDecimal goodQuantity,BigDecimal rejectQuantity,BigDecimal unusedQuantity,BigDecimal reconciledQuantity,BigDecimal variance,String status,LocalDateTime calculatedAt,Long calculatedBy,String remarks){}

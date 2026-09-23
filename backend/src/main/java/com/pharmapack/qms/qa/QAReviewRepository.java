@@ -1,0 +1,1 @@
+package com.pharmapack.qms.qa; import org.springframework.data.jpa.repository.*; import java.util.*; public interface QAReviewRepository extends JpaRepository<QAReview,Long>{ @EntityGraph(attributePaths={"batch","batch.product"}) List<QAReview> findAll(); @EntityGraph(attributePaths={"batch","batch.product"}) Optional<QAReview> findById(Long id); }

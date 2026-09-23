@@ -1,0 +1,13 @@
+target/
+automation/target/
+frontend/node_modules/
+frontend/dist/
+frontend/tsconfig.tsbuildinfo
+*.class
+.DS_Store
+*.log
+RbcTcsWorld_PharmaPackQMS_V2_1.zip
+
+# Archives / IDE build output
+*.zip
+bin/

@@ -1,0 +1,18 @@
+USE pharmapack_qms;
+INSERT INTO roles(name,description) VALUES('ADMIN','System administrator'),('QA','Quality assurance'),('SUPERVISOR','Packaging supervisor'),('OPERATOR','Packaging operator'),('INSPECTOR','Quality inspector'),('VIEWER','Read only');
+-- Demo login credentials (BCrypt-hashed, strength 10): admin/admin123, qa_user/qa123, supervisor/super123, operator/operator123, inspector/inspect123
+INSERT INTO users(username,password_hash,full_name,email) VALUES('admin','$2b$10$lL4Y.L/nYdNuk.zkt01RCeddonjZyrRDESRNN3Q/0BFwLstRLL6gq','System Administrator','admin@example.com'),('qa_user','$2b$10$XXUsv1KagKXINU9AhNFZgOqk7GG.wh2.tGV43eErNY5Jl3K2aY7vC','QA User','qa@example.com'),('supervisor','$2b$10$xGvFQDfwN3iBBKboYL1O4O.l8Cx/cL2.TRyTzHwlwCunLFGEqSdva','Packaging Supervisor','supervisor@example.com'),('operator','$2b$10$B.yHNG8HFBLQSegOQ7wmBuLfZTamCaVgMYTYQlM7aInZZZFL06Kz6','Packaging Operator','operator@example.com'),('inspector','$2b$10$q8GmJHnkL.JjpP7urVXGi.88rtkXftr5PzVa5R9I6KQ7midAjmtZS','Quality Inspector','inspector@example.com');
+INSERT INTO user_roles(user_id,role_id) SELECT u.id,r.id FROM users u JOIN roles r ON r.name='ADMIN' WHERE u.username='admin';
+INSERT INTO user_roles(user_id,role_id) SELECT u.id,r.id FROM users u JOIN roles r ON r.name='QA' WHERE u.username='qa_user';
+INSERT INTO user_roles(user_id,role_id) SELECT u.id,r.id FROM users u JOIN roles r ON r.name='SUPERVISOR' WHERE u.username='supervisor';
+INSERT INTO user_roles(user_id,role_id) SELECT u.id,r.id FROM users u JOIN roles r ON r.name='OPERATOR' WHERE u.username='operator';
+INSERT INTO user_roles(user_id,role_id) SELECT u.id,r.id FROM users u JOIN roles r ON r.name='INSPECTOR' WHERE u.username='inspector';
+INSERT INTO products(product_code,product_name,strength,dosage_form,pack_size) VALUES('PMP-001','Demo Product 10 mg','10 mg','Tablet','30 tablets'),('PMP-002','Demo Product 20 mg','20 mg','Tablet','60 tablets'),('PMP-003','Demo Product 5 mg','5 mg','Capsule','100 capsules');
+INSERT INTO materials(material_code,material_name,material_type,uom) VALUES('MAT-001','Printed Carton','PACKAGING','EA'),('MAT-002','Blister Foil','PACKAGING','M'),('MAT-003','Label Roll','PACKAGING','ROLL'),('MAT-004','Leaflet','PACKAGING','EA');
+INSERT INTO material_lots(material_id,lot_number,supplier,quantity,expiry_date) SELECT id,'ML-001','Demo Supplier',100000,'2027-12-31' FROM materials WHERE material_code='MAT-001';
+INSERT INTO equipment(equipment_code,equipment_name,equipment_type,calibration_due_date) VALUES('EQ-001','Cartoner 01','CARTONER','2027-06-30'),('EQ-002','Labeler 01','LABELER','2027-08-31'),('EQ-003','Vision System 01','VISION','2027-09-30');
+INSERT INTO packaging_lines(line_code,line_name,location) VALUES('LINE-01','Packaging Line 01','Room A'),('LINE-02','Packaging Line 02','Room B');
+INSERT INTO batches(batch_number,product_id,lot_size,batch_status,manufacturing_date,expiry_date) SELECT 'BATCH-DEMO-001',id,10000,'CREATED','2026-09-01','2028-09-01' FROM products WHERE product_code='PMP-001';
+INSERT INTO batches(batch_number,product_id,lot_size,batch_status,manufacturing_date,expiry_date) SELECT 'BATCH-DEMO-002',id,25000,'CREATED','2026-09-02','2028-09-02' FROM products WHERE product_code='PMP-002';
+INSERT INTO aql_plans(plan_code,inspection_level,aql_value,sample_size,acceptance_number,rejection_number,description) VALUES('AQL-II-1.0','II',1.0,125,3,4,'Training AQL plan'),('AQL-II-0.65','II',0.65,125,2,3,'Training AQL plan');
+INSERT INTO defects(defect_code,defect_name,defect_class,description) VALUES('DEF-MAJ-001','Missing Label','MAJOR','Required label missing'),('DEF-MIN-001','Print Smudge','MINOR','Minor print defect'),('DEF-CRT-001','Wrong Product','CRITICAL','Incorrect product identification');
