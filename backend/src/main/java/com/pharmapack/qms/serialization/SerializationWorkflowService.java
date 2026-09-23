@@ -1,6 +1,10 @@
 package com.pharmapack.qms.serialization;
 
 import com.pharmapack.qms.auth.CurrentUser;
+import com.pharmapack.qms.line.LineSimulatorService;
+import com.pharmapack.qms.line.PlcState;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,19 +15,36 @@ public class SerializationWorkflowService {
     private final SerializedUnitRepository unitRepository;
     private final SerializationEventRepository eventRepository;
     private final VisionResultRepository visionRepository;
+    private final LineSimulatorService line;
 
     public SerializationWorkflowService(SerializedUnitRepository unitRepository,
                                         SerializationEventRepository eventRepository,
-                                        VisionResultRepository visionRepository) {
+                                        VisionResultRepository visionRepository,
+                                        LineSimulatorService line) {
         this.unitRepository = unitRepository;
         this.eventRepository = eventRepository;
         this.visionRepository = visionRepository;
+        this.line = line;
+    }
+
+    /** DEF-04: printing, vision inspection and commissioning happen ON the line, so the PLC must be RUNNING. */
+    private void requireLineRunning(String operation) {
+        if (line.state() != PlcState.RUNNING) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Cannot " + operation + ": packaging line is " + line.state() + " (must be RUNNING)");
+        }
     }
 
     @Transactional
     public VisionResult verify(String serial, String actualBarcode, String actualLot, String actualExpiry) {
+        requireLineRunning("run vision verification");
         SerializedUnit unit = unitRepository.findBySerialNumber(serial)
                 .orElseThrow(() -> new IllegalArgumentException("Serial number not found: " + serial));
+        // DEF-03: the camera can only inspect a code that has actually been printed.
+        if (!"PRINTED".equals(unit.getStatus())) {
+            throw new IllegalArgumentException("Only PRINTED serials can be vision-verified (status is "
+                    + unit.getStatus() + ")");
+        }
 
         String expectedLot = unit.getBatch().getBatchNumber();
         String expectedExpiry = unit.getBatch().getExpiryDate() == null ? null : unit.getBatch().getExpiryDate().toString();
@@ -62,6 +83,7 @@ public class SerializationWorkflowService {
 
     @Transactional
     public SerializedUnit commission(String serial) {
+        requireLineRunning("commission");
         SerializedUnit unit = unitRepository.findBySerialNumber(serial)
                 .orElseThrow(() -> new IllegalArgumentException("Serial number not found: " + serial));
         // GMP: only a serial with a PASS vision result (status VISION_VERIFIED) may be commissioned.
@@ -82,6 +104,7 @@ public class SerializationWorkflowService {
 
     @Transactional
     public SerializedUnit print(String serial) {
+        requireLineRunning("print");
         SerializedUnit unit = unitRepository.findBySerialNumber(serial)
                 .orElseThrow(() -> new IllegalArgumentException("Serial number not found: " + serial));
         if (!"CREATED".equals(unit.getStatus())) {

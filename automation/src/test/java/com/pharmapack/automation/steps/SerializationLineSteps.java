@@ -1,6 +1,7 @@
 package com.pharmapack.automation.steps;
 
 import com.pharmapack.automation.support.ApiAuth;
+import io.cucumber.java.After;
 import io.cucumber.java.en.*;
 import io.restassured.response.Response;
 
@@ -16,6 +17,47 @@ public class SerializationLineSteps {
     private String expectedLot;
     private String expectedExpiry;
     private Response verifyResponse;
+    private Response lastAttempt;
+
+    /** Scenarios tagged @stops-line leave the PLC stopped; restart it so later scenarios are not affected. */
+    @After("@stops-line")
+    public void restartLine() {
+        ApiAuth.given().post(API + "/line/start");
+    }
+
+    @Given("the packaging line is STOPPED")
+    public void lineIsStopped() {
+        Response r = ApiAuth.given().post(API + "/line/stop");
+        assertEquals(200, r.statusCode(), "POST /line/stop — body: " + r.asString());
+        assertEquals("STOPPED", r.jsonPath().getString("plcState"));
+    }
+
+    @When("I try to print the serial")
+    public void tryPrint() {
+        lastAttempt = ApiAuth.given().post(API + "/serialization/print/" + serial);
+    }
+
+    @When("I try to commission the serial")
+    public void tryCommission() {
+        lastAttempt = ApiAuth.given().post(API + "/serialization/commission/" + serial);
+    }
+
+    @When("the vision simulator is asked to verify the serial without printing it")
+    public void tryVerifyUnprinted() {
+        lastAttempt = ApiAuth.given().body(verifyBody(serial, expectedLot, expectedExpiry))
+                .post(API + "/serialization/verify");
+    }
+
+    @Then("the request is refused with HTTP {int}")
+    public void refused(int code) {
+        assertEquals(code, lastAttempt.statusCode(), "Expected refusal — body: " + lastAttempt.asString());
+        assertNotNull(lastAttempt.jsonPath().getString("message"), "Refusal should explain why: " + lastAttempt.asString());
+    }
+
+    @Then("the serial status should be {word}")
+    public void statusIs(String expected) {
+        assertEquals(expected, currentStatus());
+    }
 
     @Given("the packaging line is RUNNING")
     public void lineIsRunning() {
@@ -65,10 +107,8 @@ public class SerializationLineSteps {
         assertEquals(200, r.statusCode(), "Commission — body: " + r.asString());
     }
 
-    @Then("the serial status should be COMMISSIONED")
-    public void statusIsCommissioned() {
-        assertEquals("COMMISSIONED", currentStatus());
-        // Audit trail: the event history must record the full print -> vision -> commission chain.
+    @Then("the audit trail records CREATED, PRINTED, VISION_VERIFIED and COMMISSIONED events")
+    public void auditTrailComplete() {
         Response events = ApiAuth.given().get(API + "/serialization/" + serial + "/events");
         assertEquals(200, events.statusCode(), "Event history — body: " + events.asString());
         java.util.List<String> types = events.jsonPath().getList("eventType");
@@ -98,10 +138,13 @@ public class SerializationLineSteps {
     // ---- helpers ----
 
     private void verify(String barcode, String lot, String expiry) {
-        String body = "{\"serialNumber\":\"" + serial + "\",\"actualBarcode\":\"" + barcode + "\","
-                + "\"actualLot\":" + json(lot) + ",\"actualExpiry\":" + json(expiry) + "}";
-        verifyResponse = ApiAuth.given().body(body).post(API + "/serialization/verify");
+        verifyResponse = ApiAuth.given().body(verifyBody(barcode, lot, expiry)).post(API + "/serialization/verify");
         assertEquals(200, verifyResponse.statusCode(), "Verify — body: " + verifyResponse.asString());
+    }
+
+    private String verifyBody(String barcode, String lot, String expiry) {
+        return "{\"serialNumber\":\"" + serial + "\",\"actualBarcode\":\"" + barcode + "\","
+                + "\"actualLot\":" + json(lot) + ",\"actualExpiry\":" + json(expiry) + "}";
     }
 
     private String currentStatus() {

@@ -1,4 +1,8 @@
 Feature: Serialization and Aggregation
+
+ # Print / vision / commission require a RUNNING line (DEF-04)
+ Background:
+  Given the packaging line is RUNNING
  # Phase 4: POST /commission only PROVISIONS serials (status CREATED). A serial becomes
  # COMMISSIONED only after print -> vision PASS -> POST /commission/{serial}.
  Scenario: Provision unit-level serial numbers for a batch
