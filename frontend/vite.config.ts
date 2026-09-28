@@ -1,1 +1,2 @@
-import {defineConfig} from 'vite'; import react from '@vitejs/plugin-react'; export default defineConfig({plugins:[react()]});
+import {defineConfig} from 'vite'; import react from '@vitejs/plugin-react'; // host:true -> reachable from emulators, phones and other PCs on the LAN (http://<mac-ip>:5173)
+export default defineConfig({plugins:[react()], server:{host:true, port:5173, strictPort:true}});

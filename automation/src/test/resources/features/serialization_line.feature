@@ -1,6 +1,6 @@
 Feature: Pharmaceutical packaging serialization line
 
-  @gmp @regression
+  @gmp @severity=critical @regression
   Scenario: Generate, print, verify and commission a serialized carton
     Given the packaging line is RUNNING
     And a CREATED serial exists for a valid batch
@@ -10,7 +10,7 @@ Feature: Pharmaceutical packaging serialization line
     Then the serial status should be COMMISSIONED
     And the audit trail records CREATED, PRINTED, VISION_VERIFIED and COMMISSIONED events
 
-  @gmp @negative
+  @gmp @severity=critical @negative
   Scenario: Wrong DataMatrix is rejected
     Given the packaging line is RUNNING
     And a CREATED serial exists for a valid batch
@@ -20,7 +20,7 @@ Feature: Pharmaceutical packaging serialization line
     And the serial should not be commissioned
 
   # DEF-03: a camera cannot inspect a code that was never printed
-  @gmp @negative
+  @gmp @severity=critical @negative
   Scenario: Vision verification of an unprinted serial is refused
     Given the packaging line is RUNNING
     And a CREATED serial exists for a valid batch
@@ -29,7 +29,7 @@ Feature: Pharmaceutical packaging serialization line
     And the serial status should be CREATED
 
   # DEF-04: print / vision / commission are line operations and need a RUNNING PLC
-  @gmp @negative @stops-line
+  @gmp @severity=critical @negative @stops-line
   Scenario: Printing is refused while the packaging line is stopped
     Given a CREATED serial exists for a valid batch
     And the packaging line is STOPPED
@@ -37,7 +37,7 @@ Feature: Pharmaceutical packaging serialization line
     Then the request is refused with HTTP 409
     And the serial status should be CREATED
 
-  @gmp @negative @stops-line
+  @gmp @severity=critical @negative @stops-line
   Scenario: Commissioning is refused while the packaging line is stopped
     Given the packaging line is RUNNING
     And a CREATED serial exists for a valid batch

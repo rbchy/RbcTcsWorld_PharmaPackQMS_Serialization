@@ -55,10 +55,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.setAllowedOrigins(List.of(
-                "http://localhost:5173", "http://127.0.0.1:5173",
-                "http://localhost:5174", "http://127.0.0.1:5174",
-                "http://localhost:4173", "http://127.0.0.1:4173"));
+        // Cross-device testing: the UI is opened from desktop browsers (localhost), the Android emulator
+        // (10.0.2.2), iOS simulator (localhost) and real phones / Windows PCs on the LAN (10.x, 172.16-31.x, 192.168.x).
+        // Override with CORS_ORIGIN_PATTERNS (comma-separated Spring origin patterns).
+        String patterns = System.getenv().getOrDefault("CORS_ORIGIN_PATTERNS",
+                "http://localhost:[*],http://127.0.0.1:[*],http://10.*:[*],http://172.*:[*],http://192.168.*:[*],https://*.bs-local.com:[*],http://bs-local.com:[*]");
+        cfg.setAllowedOriginPatterns(List.of(patterns.split("\\s*,\\s*")));
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         cfg.setExposedHeaders(List.of("Authorization"));

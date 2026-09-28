@@ -1,4 +1,89 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion><groupId>com.pharmapack</groupId><artifactId>pharmapack-qms-automation</artifactId><version>0.2.0</version>
-<properties><maven.compiler.source>21</maven.compiler.source><maven.compiler.target>21</maven.compiler.target><cucumber.version>7.18.1</cucumber.version><selenium.version>4.35.0</selenium.version></properties>
-<dependencies><dependency><groupId>io.cucumber</groupId><artifactId>cucumber-java</artifactId><version>${cucumber.version}</version><scope>test</scope></dependency><dependency><groupId>io.cucumber</groupId><artifactId>cucumber-junit-platform-engine</artifactId><version>${cucumber.version}</version><scope>test</scope></dependency><dependency><groupId>org.junit.platform</groupId><artifactId>junit-platform-suite</artifactId><version>1.11.0</version><scope>test</scope></dependency><dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.11.0</version><scope>test</scope></dependency><dependency><groupId>org.seleniumhq.selenium</groupId><artifactId>selenium-java</artifactId><version>${selenium.version}</version><scope>test</scope></dependency><dependency><groupId>io.rest-assured</groupId><artifactId>rest-assured</artifactId><version>5.5.6</version><scope>test</scope></dependency></dependencies>
-<build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.2</version><configuration><useModulePath>false</useModulePath></configuration></plugin></plugins></build></project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.pharmapack</groupId>
+  <artifactId>pharmapack-qms-automation</artifactId>
+  <version>0.3.0</version>
+
+  <properties>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <cucumber.version>7.18.1</cucumber.version>
+    <selenium.version>4.35.0</selenium.version>
+    <allure.version>2.29.1</allure.version>
+    <allure.cli.version>2.32.0</allure.cli.version>
+    <!-- Default run = API suite only. UI scenarios need a browser/device: use -Pui (or -Dcucumber.filter.tags=@ui). -->
+    <cucumber.filter.tags>not @ui</cucumber.filter.tags>
+  </properties>
+
+  <profiles>
+    <!-- mvn test -Pui -Dplatform=chrome|firefox|edge|safari|windows|android|ios [-Dexecution=local|grid|browserstack] -->
+    <profile>
+      <id>ui</id>
+      <properties><cucumber.filter.tags>@ui</cucumber.filter.tags></properties>
+    </profile>
+    <!-- everything: API + UI -->
+    <profile>
+      <id>all</id>
+      <properties><cucumber.filter.tags></cucumber.filter.tags></properties>
+    </profile>
+  </profiles>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-bom</artifactId>
+        <version>${allure.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency><groupId>io.cucumber</groupId><artifactId>cucumber-java</artifactId><version>${cucumber.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.cucumber</groupId><artifactId>cucumber-junit-platform-engine</artifactId><version>${cucumber.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>org.junit.platform</groupId><artifactId>junit-platform-suite</artifactId><version>1.11.0</version><scope>test</scope></dependency>
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.11.0</version><scope>test</scope></dependency>
+    <dependency><groupId>org.seleniumhq.selenium</groupId><artifactId>selenium-java</artifactId><version>${selenium.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.rest-assured</groupId><artifactId>rest-assured</artifactId><version>5.5.6</version><scope>test</scope></dependency>
+
+    <!-- Allure: Cucumber scenarios -> Allure results, and every REST Assured call attached as request/response -->
+    <dependency><groupId>io.qameta.allure</groupId><artifactId>allure-cucumber7-jvm</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>io.qameta.allure</groupId><artifactId>allure-rest-assured</artifactId><scope>test</scope></dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.2</version>
+        <configuration>
+          <useModulePath>false</useModulePath>
+          <systemPropertyVariables>
+            <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+            <cucumber.filter.tags>${cucumber.filter.tags}</cucumber.filter.tags>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+
+      <!-- mvn allure:report  -> target/site/allure-maven-plugin/index.html
+           mvn allure:serve   -> builds the report and opens it in the browser -->
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>2.15.2</version>
+        <configuration>
+          <reportVersion>${allure.cli.version}</reportVersion>
+          <resultsDirectory>allure-results</resultsDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

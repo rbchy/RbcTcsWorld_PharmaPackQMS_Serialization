@@ -3,7 +3,7 @@ import { IconLock, IconUser } from './icons';
 
 export type AuthUser = { token: string; userId: number; username: string; fullName: string; roles: string[] };
 
-const API = 'http://localhost:8080/api';
+const API = (import.meta.env.VITE_API_URL as string | undefined) || `${window.location.protocol}//${window.location.hostname}:8080/api`;
 
 export default function Login({ onLogin }: { onLogin: (u: AuthUser) => void }) {
   const [username, setUsername] = useState('');
@@ -44,15 +44,15 @@ export default function Login({ onLogin }: { onLogin: (u: AuthUser) => void }) {
         <div className="login-card__body">
           <h2>Sign in</h2>
           <p className="subtitle">Log in to access the packaging QMS dashboard.</p>
-          {error && <div className="login-error">{error}</div>}
+          {error && <div className="login-error" data-testid="login-error">{error}</div>}
           <form className="login-form" onSubmit={submit}>
             <label><IconUser size={14} /> Username
-              <input value={username} onChange={e => setUsername(e.target.value)} autoFocus autoComplete="username" />
+              <input data-testid="login-username" value={username} onChange={e => setUsername(e.target.value)} autoFocus autoComplete="username" />
             </label>
             <label><IconLock size={14} /> Password
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete="current-password" />
+              <input data-testid="login-password" type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete="current-password" />
             </label>
-            <button className="primary btn-icon" disabled={busy}><IconLock size={16} />{busy ? 'Signing in…' : 'Sign In'}</button>
+            <button data-testid="login-submit" className="primary btn-icon" disabled={busy}><IconLock size={16} />{busy ? 'Signing in…' : 'Sign In'}</button>
           </form>
           <div className="login-hint">
             <strong>Demo credentials</strong> (portfolio/training data only):<br />

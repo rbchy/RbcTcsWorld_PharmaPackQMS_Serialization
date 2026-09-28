@@ -11,3 +11,6 @@ RbcTcsWorld_PharmaPackQMS_V2_1.zip
 # Archives / IDE build output
 *.zip
 bin/
+
+# Allure CLI download cache
+automation/.allure/

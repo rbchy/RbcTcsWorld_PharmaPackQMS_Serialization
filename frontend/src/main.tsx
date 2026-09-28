@@ -10,7 +10,7 @@ import {
 } from './icons';
 import { FieldRule, fieldHandler, validateAll, validateDateOrder } from './validation';
 
-const API = 'http://localhost:8080/api';
+const API = (import.meta.env.VITE_API_URL as string | undefined) || `${window.location.protocol}//${window.location.hostname}:8080/api`;
 const AUTH_STORAGE_KEY = 'pharmapack_qms_auth';
 
 type Product = { id: number; productCode: string; productName: string; strength?: string; dosageForm?: string; packSize?: string; status: string };
@@ -50,15 +50,15 @@ function Table({ rows }: { rows: any[][] }) {
 // marks it invalid, and shows the inline error message under it. Every form below
 // is built from this plus plain <select> blocks (selects keep their own markup
 // because their options come from live data — products, batches, plans, etc.).
-function TF({ label, value, error, onChange, onBlur, type = 'text', step, min, placeholder }: {
+function TF({ label, value, error, onChange, onBlur, type = 'text', step, min, placeholder, testId }: {
   label: string; value: string; error?: string; onChange: (v: string) => void; onBlur?: () => void;
-  type?: string; step?: string; min?: string; placeholder?: string;
+  type?: string; step?: string; min?: string; placeholder?: string; testId?: string;
 }) {
   return (
     <label>
       {label}
       <input
-        type={type} step={step} min={min} placeholder={placeholder} value={value}
+        type={type} step={step} min={min} placeholder={placeholder} value={value} data-testid={testId}
         className={error ? 'field-invalid' : ''}
         onChange={e => onChange(e.target.value)}
         onBlur={onBlur}
@@ -442,7 +442,9 @@ function App() {
   };
 
   const lineAction = async (action: string) => {
-    try { setLineStatus(await api(`/line/${action}`, { method: 'POST' })); notify(`Line ${action.replace('-', ' ')} command accepted`); }
+    // DEF-05: the command response is only {plcState}; merge it instead of replacing (replacing dropped
+    // `devices`, and lineStatus.devices['PRINTER-01'] then crashed the whole page after START LINE).
+    try { const r = await api(`/line/${action}`, { method: 'POST' }); setLineStatus(s => ({ ...s, ...r, devices: r.devices ?? s.devices ?? {} })); notify(`Line ${action.replace('-', ' ')} command accepted`); }
     catch (x: any) { notify(x.message, 'error'); }
   };
 
@@ -514,7 +516,7 @@ function App() {
     </header>
     <nav>{TABS().map(x => {
       const Icon = TAB_ICONS[x];
-      return <button key={x} className={tab === x ? 'active' : ''} onClick={() => setTab(x)}><Icon size={15} />{x}</button>;
+      return <button key={x} data-testid={'nav-' + x.toLowerCase().replace(/\s+/g, '-')} className={tab === x ? 'active' : ''} onClick={() => setTab(x)}><Icon size={15} />{x}</button>;
     })}</nav>
     <main>
       <div className="topbar">
@@ -524,11 +526,11 @@ function App() {
         </div>
         <div className="topbar__right">
           <span className="user-pill"><IconUser size={14} /> <strong>{auth.fullName}</strong> {auth.roles[0] && <span className="role-badge">{auth.roles[0]}</span>}</span>
-          <button className="chip-btn logout" onClick={logout}><IconLogout size={15} /> Logout</button>
+          <button data-testid="logout" className="chip-btn logout" onClick={logout}><IconLogout size={15} /> Logout</button>
         </div>
       </div>
 
-      {msg && <div className={'notice' + (msgKind === 'error' ? ' error' : '')}>{msg}</div>}
+      {msg && <div data-testid="notice" data-kind={msgKind} className={'notice' + (msgKind === 'error' ? ' error' : '')}>{msg}</div>}
 
       {tab === 'Dashboard' && <>
         <div className="cards">
@@ -736,14 +738,14 @@ function App() {
       {tab === 'Serialization' && <>
         <h2>Packaging Line / L3 Serialization Manager</h2>
         <div className="dashboard-grid">
-          <div className="card"><strong>PLC</strong><div className="status">{lineStatus.plcState}</div></div>
+          <div className="card"><strong>PLC</strong><div className="status" data-testid="plc-state">{lineStatus.plcState}</div></div>
           <div className="card"><strong>Printer</strong><div className="status">{lineStatus.devices['PRINTER-01'] || 'READY'}</div></div>
           <div className="card"><strong>Vision</strong><div className="status">{lineStatus.devices['VISION-01'] || 'READY'}</div></div>
           <div className="card"><strong>Scanner</strong><div className="status">{lineStatus.devices['SCANNER-01'] || 'READY'}</div></div>
         </div>
         <div className="toolbar">
-          <button className="primary" onClick={() => lineAction('start')}>START LINE</button>
-          <button onClick={() => lineAction('stop')}>STOP</button>
+          <button data-testid="line-start" className="primary" onClick={() => lineAction('start')}>START LINE</button>
+          <button data-testid="line-stop" onClick={() => lineAction('stop')}>STOP</button>
           <button onClick={() => lineAction('fault')}>SIMULATE FAULT</button>
           <button onClick={() => lineAction('emergency-stop')}>E-STOP</button>
           <button onClick={loadLineStatus}>REFRESH STATUS</button>
@@ -752,7 +754,7 @@ function App() {
         <h2>Commission Serial Numbers</h2>
         <form onSubmit={commissionSerials} className="form">
           <SF label="Batch*" error={serfErrors.batchId}>
-            <select value={serf.batchId} onChange={e => setSerf({ ...serf, batchId: e.target.value })}>
+            <select data-testid="serial-batch" value={serf.batchId} onChange={e => setSerf({ ...serf, batchId: e.target.value })}>
               <option value="">Select</option>{batches.map(b => <option key={b.id} value={b.id}>{b.batchNumber}</option>)}
             </select>
           </SF>
@@ -761,9 +763,9 @@ function App() {
               <option value="UNIT">UNIT</option><option value="CASE">CASE</option><option value="PALLET">PALLET</option>
             </select>
           </SF>
-          <TF label="Quantity*" type="number" min="1" value={serf.quantity} error={serfErrors.quantity} onChange={v => serfChange('quantity')(v)} />
+          <TF label="Quantity*" testId="serial-quantity" type="number" min="1" value={serf.quantity} error={serfErrors.quantity} onChange={v => serfChange('quantity')(v)} />
           <TF label="GTIN" value={serf.gtin} error={serfErrors.gtin} onChange={v => serfChange('gtin')(v)} placeholder="optional GS1 GTIN" />
-          <button className="primary btn-icon"><IconSave size={16} /> Commission</button>
+          <button data-testid="serial-generate" className="primary btn-icon"><IconSave size={16} /> Commission</button>
         </form>
 
         <h2>Vision / Cognex Simulator</h2>
@@ -798,15 +800,15 @@ function App() {
 
         <h3>Serialized Units</h3>
         <div className="form" style={{ gridTemplateColumns: '1fr' }}>
-          <label>Choose a batch to view its serialized units<select value={serialBatchId} onChange={e => loadSerialization(e.target.value)}>
+          <label>Choose a batch to view its serialized units<select data-testid="units-batch" value={serialBatchId} onChange={e => loadSerialization(e.target.value)}>
             <option value="">Select</option>{batches.map(b => <option key={b.id} value={b.id}>{b.batchNumber}</option>)}
           </select></label>
         </div>
         <table><thead><tr><th>ID</th><th>Serial</th><th>Level</th><th>Parent</th><th>Status</th><th>Commissioned</th><th>Actions</th></tr></thead>
-          <tbody>{serializedUnits.map(u => <tr key={u.id}>
+          <tbody>{serializedUnits.map(u => <tr key={u.id} data-testid="unit-row" data-serial={u.serialNumber} data-status={u.status}>
             <td>{u.id}</td><td>{u.serialNumber}</td><td>{u.aggregationLevel}</td><td>{u.parentSerialNumber || ''}</td><td>{u.status}</td><td>{u.commissionedAt || ''}</td>
-            <td><button onClick={() => printSerial(u.serialNumber)} disabled={u.status !== 'CREATED'}>Print</button>{' '}
-                <button onClick={() => commissionSerial(u.serialNumber)} disabled={u.status !== 'VISION_VERIFIED'}>Commission</button></td>
+            <td><button data-testid="unit-print" onClick={() => printSerial(u.serialNumber)} disabled={u.status !== 'CREATED'}>Print</button>{' '}
+                <button data-testid="unit-commission" onClick={() => commissionSerial(u.serialNumber)} disabled={u.status !== 'VISION_VERIFIED'}>Commission</button></td>
           </tr>)}</tbody></table>
       </>}
 

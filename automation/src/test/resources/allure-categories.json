@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Server errors (HTTP 5xx) - product defect",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": ".*(but was: <5\\d\\d>|\"status\":5\\d\\d|INTERNAL_SERVER_ERROR).*"
+  },
+  {
+    "name": "Authentication / backend not reachable - environment",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": ".*(Connection refused|Login as .* failed|but was: <401>).*"
+  },
+  {
+    "name": "Business rule / GMP assertion failed - product defect",
+    "matchedStatuses": ["failed"]
+  },
+  {
+    "name": "Test code or step definition problem",
+    "matchedStatuses": ["broken"]
+  },
+  {
+    "name": "Undefined / skipped steps",
+    "matchedStatuses": ["skipped"]
+  }
+]
