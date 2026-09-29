@@ -95,17 +95,25 @@ jobs:
           -DbaseUrl=http://localhost:8080/api
           -DuiBaseUrl=http://localhost:5173
 
+      # Allure command-line (not the Maven plugin): it writes a self-contained report with index.html
+      # at the root, which is what GitHub Pages serves. The Maven plugin wraps it in a Maven-site page.
       - name: Generate Allure report
         if: always()
-        working-directory: automation
-        run: mvn -B -ntp allure:report
+        env:
+          ALLURE_VERSION: "2.32.0"
+        run: |
+          curl -sSL -o allure.zip \
+            "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${ALLURE_VERSION}/allure-commandline-${ALLURE_VERSION}.zip"
+          unzip -q allure.zip -d "$RUNNER_TEMP"
+          "$RUNNER_TEMP/allure-${ALLURE_VERSION}/bin/allure" generate automation/target/allure-results --clean -o allure-report
+          test -f allure-report/index.html && echo "Allure report OK: $(ls allure-report | wc -l) entries"
 
       - name: Upload Allure report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: automation/target/site/allure-maven-plugin
+          path: allure-report
 
       - name: Upload Cucumber reports
         if: always()
@@ -127,7 +135,7 @@ jobs:
         if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: automation/target/site/allure-maven-plugin
+          path: allure-report
 
   publish-report:
     name: Publish Allure report to GitHub Pages
