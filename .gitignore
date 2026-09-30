@@ -14,3 +14,6 @@ bin/
 
 # Allure CLI download cache
 automation/.allure/
+
+# Desktop app builds copied into the project folder
+*.app/
