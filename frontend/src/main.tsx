@@ -10,7 +10,9 @@ import {
 } from './icons';
 import { FieldRule, fieldHandler, validateAll, validateDateOrder } from './validation';
 
-const API = (import.meta.env.VITE_API_URL as string | undefined) || `${window.location.protocol}//${window.location.hostname}:8080/api`;
+// Dev server (vite, :5173) -> API on :8080 of the same host. Bundled desktop/server build -> same origin.
+const API = (import.meta.env.VITE_API_URL as string | undefined)
+  || (window.location.port === '5173' ? `${window.location.protocol}//${window.location.hostname}:8080/api` : `${window.location.origin}/api`);
 const AUTH_STORAGE_KEY = 'pharmapack_qms_auth';
 
 type Product = { id: number; productCode: string; productName: string; strength?: string; dosageForm?: string; packSize?: string; status: string };

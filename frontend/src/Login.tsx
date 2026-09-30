@@ -3,7 +3,9 @@ import { IconLock, IconUser } from './icons';
 
 export type AuthUser = { token: string; userId: number; username: string; fullName: string; roles: string[] };
 
-const API = (import.meta.env.VITE_API_URL as string | undefined) || `${window.location.protocol}//${window.location.hostname}:8080/api`;
+// Dev server (vite, :5173) -> API on :8080 of the same host. Bundled desktop/server build -> same origin.
+const API = (import.meta.env.VITE_API_URL as string | undefined)
+  || (window.location.port === '5173' ? `${window.location.protocol}//${window.location.hostname}:8080/api` : `${window.location.origin}/api`);
 
 export default function Login({ onLogin }: { onLogin: (u: AuthUser) => void }) {
   const [username, setUsername] = useState('');

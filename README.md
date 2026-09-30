@@ -18,6 +18,7 @@ A full-stack **pharmaceutical packaging Quality Management System** with a simul
 - [Tech stack](#tech-stack)
 - [Project structure](#project-structure)
 - [Getting started](#getting-started)
+- [Desktop edition (Windows / macOS / Linux)](#desktop-edition-windows--macos--linux--no-install-needed)
 - [Test automation](#test-automation)
 - [Cross-platform UI testing](#cross-platform-ui-testing)
 - [Reports](#reports)
@@ -168,6 +169,38 @@ Open `http://localhost:5173`. The dev server also listens on your LAN IP, so pho
 | supervisor | super123 | Supervisor |
 | operator | operator123 | Operator |
 | inspector | inspect123 | Inspector |
+
+## Desktop edition (Windows / macOS / Linux — no install needed)
+
+A standalone build of the whole app: React UI, Spring Boot API, an **embedded H2 database** with the demo data, and its own Java runtime.
+No MySQL, Java or Node.js is needed on the target computer.
+
+**Get it:** open the **Actions** tab, run **Package desktop apps**, then download the artifact for your OS.
+Pushing a tag such as `git tag v1.0.0 && git push origin v1.0.0` also attaches the files to a GitHub **Release**.
+
+| OS | Portable (unzip and run) | Installer |
+|---|---|---|
+| Windows | `PharmaPackQMS-1.0.0-windows-portable.zip`, then run `PharmaPackQMS\PharmaPackQMS.exe` | `PharmaPackQMS-1.0.0.msi` |
+| macOS | `PharmaPackQMS-1.0.0-macos-portable.zip`, then run `PharmaPackQMS.app` | `PharmaPackQMS-1.0.0.dmg` |
+| Linux | `PharmaPackQMS-1.0.0-linux-portable.tar.gz`, then run `PharmaPackQMS/bin/PharmaPackQMS` | `pharmapackqms_1.0.0_amd64.deb` |
+
+**What happens when it runs:**
+
+- The browser opens `http://localhost:8080` automatically. Log in as `admin` / `admin123`.
+- A tray icon offers **Open** and **Quit**. On Windows, a console window shows the log; closing it stops the app.
+- **Phones, tablets and other PCs** on the same Wi-Fi can use the "Other devices" address printed at startup, for example `http://192.168.1.20:8080`. Allow the firewall prompt on first run.
+- Data is kept in `~/.pharmapack-qms/`. Delete that folder to reset to the demo data.
+- The builds are unsigned demo builds. On macOS, right-click the app and choose **Open** the first time. On Windows, click **More info → Run anyway** in SmartScreen.
+
+**Build and run locally (Java 21 + Node 20):**
+
+```bash
+cd frontend && npm install && npx vite build && cd ..
+mvn -DskipTests package
+java -Dspring.profiles.active=desktop -jar target/pharmapack-qms-0.2.0-SNAPSHOT.jar
+```
+
+The regular MySQL setup below is unchanged. The desktop edition only switches on with the `desktop` profile.
 
 ## Test automation
 
