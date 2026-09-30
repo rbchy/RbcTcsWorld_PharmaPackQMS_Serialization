@@ -245,6 +245,7 @@ The same `@ui` scenarios run on every target. Choose one with `-Dplatform` (and 
 
 More options: `-Ddevice`, `-Dos.version`, `-Dudid` (real devices), `-Dappium.url`, `-Dui.timeout`.
 See [`automation/README.md`](automation/README.md) for full details.
+বাংলায় প্রতিটা ডিভাইসের (Mac / Windows / Linux / Android / iOS) সব command: [`docs/RUN_GUIDE_BN.md`](docs/RUN_GUIDE_BN.md).
 
 ## Reports
 
