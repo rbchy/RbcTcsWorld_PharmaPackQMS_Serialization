@@ -272,6 +272,9 @@ Allure failure categories separate **product defects** (5xx errors, broken GMP r
 In each case the test was written first and failed (red); the fix was then verified (green).
 
 ## Roadmap
+
+> **Unified platform design (EN + বাংলা):** [`docs/unified-platform/README.md`](docs/unified-platform/README.md). It merges this repo, PharmaPackQMS and PPES (Pharmaceutical PMC) into one suite.
+
 - [x] GitHub Actions CI: MySQL service, backend, headless UI, Allure published to GitHub Pages
 - [ ] Per-scenario test data (a fresh batch per run) for fully isolated and parallel runs
 - [ ] JDBC-level verification of `serialized_units`, `serialization_events`, `vision_results`
