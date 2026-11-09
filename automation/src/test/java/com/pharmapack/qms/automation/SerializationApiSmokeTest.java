@@ -17,8 +17,8 @@ class SerializationApiSmokeTest {
             .get(API + "/line/status")
             .then()
             .statusCode(200)
-            .body("plcState", notNullValue())
-            .body("devices", notNullValue());
+            .body("plcState", oneOf("STOPPED", "RUNNING", "FAULT", "EMERGENCY_STOP"))
+            .body("devices.keySet()", hasItems(DEVICES));
     }
 
     @Test
@@ -30,13 +30,36 @@ class SerializationApiSmokeTest {
             .statusCode(401);
     }
 
+    private static final String[] DEVICES = {"PRINTER-01", "VISION-01", "SCANNER-01", "REJECT-01"};
+
+    private static void allDevices(String state) {
+        for (String d : DEVICES) {
+            ApiAuth.given().when().put(API + "/line/devices/" + d + "?state=" + state).then().statusCode(200);
+        }
+    }
+
     @Test
-    void lineCanBeStarted() {
+    void lineStartsWhenEveryDeviceIsReady() {
+        allDevices("READY");
         ApiAuth.given()
             .when()
             .post(API + "/line/start")
             .then()
             .statusCode(200)
-            .body("plcState", anyOf(equalTo("RUNNING"), equalTo("FAULT")));
+            .body("plcState", equalTo("RUNNING"));
+    }
+
+    @Test
+    void aFaultyDeviceStopsTheLineAndBlocksStart() {
+        allDevices("READY");
+        try {
+            ApiAuth.given().when().put(API + "/line/devices/VISION-01?state=FAULT")
+                .then().statusCode(200).body("plcState", equalTo("FAULT"));
+            ApiAuth.given().when().post(API + "/line/start")
+                .then().statusCode(200).body("plcState", equalTo("FAULT"));
+        } finally {
+            allDevices("READY");
+            ApiAuth.given().when().post(API + "/line/start").then().body("plcState", equalTo("RUNNING"));
+        }
     }
 }

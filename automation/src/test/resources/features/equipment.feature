@@ -4,3 +4,4 @@ Feature: GET equipment
   When I GET "/api/master/equipment"
   Then the HTTP status is 200
   And the response body is JSON
+  And the list field "equipmentCode" contains "EQ-001"

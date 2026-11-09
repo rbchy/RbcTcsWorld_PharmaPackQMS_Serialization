@@ -1,11 +1,10 @@
 # PharmaPack QMS — CI pipeline
-# On every push / pull request: MySQL -> backend -> frontend -> API + UI tests (headless Chrome)
+# On every push (any branch) / pull request: MySQL -> backend -> frontend -> API + UI tests (headless Chrome)
 # -> Cucumber + Allure reports as downloadable artifacts; on main, Allure is published to GitHub Pages.
 name: CI
 
 on:
-  push:
-    branches: [main]
+  push:                     # every branch; the Allure report is published to Pages only from main
   pull_request:
     branches: [main]
   workflow_dispatch:        # "Run workflow" button in the Actions tab
