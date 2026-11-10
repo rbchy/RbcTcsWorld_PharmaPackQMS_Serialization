@@ -4,11 +4,11 @@
 
 ### Pharmaceutical packaging QMS with a simulated L3 serialization line, tested end to end with Cucumber, REST Assured, Selenium and JUnit
 
-[![Typing SVG](https://readme-typing-svg.demolab.com/?font=Fira+Code&size=18&pause=1500&color=FFC107&center=true&vCenter=true&width=900&repeat=true&lines=Spring+Boot+3.5+%C2%B7+React+19+%C2%B7+MySQL+8+%C2%B7+JWT;Provision+%E2%86%92+Print+%E2%86%92+Vision+%E2%86%92+Commission+%E2%86%92+Aggregate;77+%2F+77+tests+green+%C2%B7+unit+%2B+API+%2B+UI+in+CI)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com/?font=Fira+Code&size=18&pause=1500&color=FFC107&center=true&vCenter=true&width=900&repeat=true&lines=Spring+Boot+3.5+%C2%B7+React+19+%C2%B7+MySQL+8+%C2%B7+JWT;Provision+%E2%86%92+Print+%E2%86%92+Vision+%E2%86%92+Commission+%E2%86%92+Aggregate;78+%2F+78+tests+green+%C2%B7+unit+%2B+API+%2B+UI+in+CI)](https://git.io/typing-svg)
 
 <!-- ============ STATUS BAR ============ -->
 [![CI](https://github.com/rbchy/RbcTcsWorld_PharmaPackQMS_Serialization/actions/workflows/ci.yml/badge.svg)](https://github.com/rbchy/RbcTcsWorld_PharmaPackQMS_Serialization/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/Tests-77%20%2F%2077%20passed-22c55e?style=for-the-badge&logo=checkmarx&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-78%20%2F%2078%20passed-22c55e?style=for-the-badge&logo=checkmarx&logoColor=white)
 [![Allure](https://img.shields.io/badge/Allure-live%20report-FF6C37?style=for-the-badge)](https://rbchy.github.io/RbcTcsWorld_PharmaPackQMS_Serialization/)
 ![Domain](https://img.shields.io/badge/Domain-Pharma%20Packaging%20%C2%B7%20GMP-155e75?style=for-the-badge)
 
@@ -50,12 +50,12 @@ Every push builds the backend, loads MySQL, starts the API and the React UI, and
 
 | | |
 |---|---|
-| 🧪 **Tests** | 27 unit · 42 Cucumber API · 4 Cucumber UI · 4 JUnit API |
-| ✅ **CI** | 77 / 77 · ≈ 2 min end to end |
+| 🧪 **Tests** | 27 unit · 42 Cucumber API · 5 Cucumber UI · 4 JUnit API |
+| ✅ **CI** | 78 / 78 · ≈ 2 min end to end |
 | 🔐 **Security** | JWT login · 5 roles · audit trail · e-signatures |
 | 🖥️ **Editions** | MySQL server · standalone desktop (Windows / macOS / Linux) |
 | 📊 **Reports** | Allure (live on Pages) · Cucumber HTML / JSON / JUnit |
-| 🐞 **Defects found** | 6 by automation (5 fixed) |
+| 🐞 **Defects found** | 6 by automation (all 6 fixed) |
 
 </td>
 </tr>
@@ -69,11 +69,42 @@ Every push builds the backend, loads MySQL, starts the API and the React UI, and
 |---|---:|---|---|
 | 🧩 Backend unit (JUnit 5 + Mockito) | 27 | Reconciliation: balanced → `RECONCILED`, shortfall or overage → `INVESTIGATION_REQUIRED` with the exact variance, audit entry written · AQL: Ac/Re boundaries → ACCEPT / REVIEW / REJECT · PLC: a faulty or offline device stops the line and blocks START | ![passed](https://img.shields.io/badge/-27%20passed-22c55e?style=flat-square) |
 | 🌐 Cucumber API (REST Assured) | 42 | Every module, with its seeded records · JWT login and 401s · full serialization chain with event history · GMP negative rules (wrong DataMatrix, no vision, stopped line, bad aggregation) · AQL 3 / 4 defect boundary · reconciliation variance | ![passed](https://img.shields.io/badge/-42%20passed-22c55e?style=flat-square) |
-| 🖥️ Cucumber UI (Selenium, headless Chrome) | 4 | Invalid and valid login · START / STOP on the HMI · new serial printed while *Commission* stays disabled before vision | ![passed](https://img.shields.io/badge/-4%20passed-22c55e?style=flat-square) |
+| 🖥️ Cucumber UI (Selenium, headless Chrome) | 5 | Invalid and valid login · START / STOP on the HMI · new serial printed while *Commission* stays disabled before vision · units table follows the batch just generated (DEF-06) | ![passed](https://img.shields.io/badge/-5%20passed-22c55e?style=flat-square) |
 | 🔌 JUnit API smoke | 4 | Line status lists all 4 devices · 401 without a token · all devices READY → `RUNNING` · a FAULT device → `FAULT`, then recovers | ![passed](https://img.shields.io/badge/-4%20passed-22c55e?style=flat-square) |
-| **Total** | **77** | | **100 %** |
+| **Total** | **78** | | **100 %** |
 
 <sub>GitHub Actions on Ubuntu: MySQL 8 service, Temurin 21, Node 20, headless Chrome ([workflow](.github/workflows/ci.yml)). Allure report: [rbchy.github.io/RbcTcsWorld_PharmaPackQMS_Serialization](https://rbchy.github.io/RbcTcsWorld_PharmaPackQMS_Serialization/).</sub>
+
+```mermaid
+pie showData title 78 automated tests by layer
+    "Backend unit (JUnit 5 + Mockito)" : 27
+    "Cucumber API (REST Assured)" : 42
+    "Cucumber UI (Selenium)" : 5
+    "JUnit API smoke" : 4
+```
+
+```mermaid
+xychart-beta
+    title "Cucumber API scenario definitions per module"
+    x-axis ["Serial.", "Line", "AQL", "E-sign", "Audit", "Auth", "Recon.", "CAPA", "Deviation", "Prod.", "QA", "Other 6"]
+    y-axis "Scenarios" 0 --> 6
+    bar [5, 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 6]
+```
+
+<sub>"Other 6" = products, batches, materials, equipment, lines and the smoke check, one scenario each. A Scenario Outline row brings the API run to 42.</sub>
+
+### 🧪 Test pyramid
+
+```mermaid
+flowchart TB
+    UI["🖥️ UI · 5<br/>Selenium, headless Chrome<br/>slowest, closest to the operator"]
+    API["🌐 API · 46<br/>42 Cucumber + REST Assured · 4 JUnit smoke<br/>every module, GMP rules, JWT"]
+    UNIT["🧩 Unit · 27<br/>JUnit 5 + Mockito<br/>reconciliation, AQL, PLC logic, milliseconds"]
+    UI --- API --- UNIT
+    style UI fill:#f59e0b,color:#111
+    style API fill:#0ea5e9,color:#111
+    style UNIT fill:#22c55e,color:#111
+```
 
 ---
 
@@ -145,6 +176,108 @@ The backend enforces these rules, and an automated test covers each one:
 4. Only **COMMISSIONED** serials can be aggregated, and only under a higher level of the same batch (UNIT < CASE < PALLET).
 5. Every step writes a serialization event (`GET /api/serialization/{serial}/events`).
 
+### 🏭 Packaging-line control (PLC simulator)
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> STOPPED
+    STOPPED --> RUNNING : START (all 4 devices READY)
+    STOPPED --> FAULT : START with a device OFFLINE / FAULT
+    RUNNING --> STOPPED : STOP
+    RUNNING --> FAULT : a device goes OFFLINE / FAULT
+    RUNNING --> EMERGENCY_STOP : E-STOP
+    FAULT --> RUNNING : device recovered + START
+    FAULT --> STOPPED : STOP
+    EMERGENCY_STOP --> STOPPED : STOP (reset)
+    note right of RUNNING
+        Print, vision and commission are allowed only here.
+        Anywhere else they get 409 Conflict.
+    end note
+```
+
+Devices: **PRINTER-01 · VISION-01 · SCANNER-01 · REJECT-01**, each READY / RUNNING / OFFLINE / FAULT.
+
+### 📦 Aggregation hierarchy
+
+```mermaid
+flowchart TB
+    PAL["🟫 PALLET"] --> C1["📦 CASE 1"]
+    PAL --> C2["📦 CASE 2"]
+    C1 --> U1["💊 UNIT"]
+    C1 --> U2["💊 UNIT"]
+    C1 --> U3["💊 UNIT"]
+    C2 --> U4["💊 UNIT"]
+    C2 --> U5["💊 UNIT"]
+```
+
+Only **COMMISSIONED** serials of the **same batch** can be packed, and always into a higher level (UNIT → CASE → PALLET). The parent link is `serialized_units.parent_id`.
+
+### 🔄 One serial through the API
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Op as Operator (HMI / test)
+    participant API as Spring Boot API
+    participant PLC as Line simulator
+    participant DB as MySQL
+    Op->>API: POST /auth/login
+    API-->>Op: JWT
+    Op->>API: POST /line/start (Bearer)
+    API->>PLC: start()
+    PLC-->>API: RUNNING
+    Op->>API: POST /serialization/commission {batch, qty}
+    API->>DB: insert serialized_units (CREATED) + event
+    Op->>API: POST /serialization/print/{serial}
+    API->>PLC: line RUNNING?
+    API->>DB: status PRINTED + event
+    Op->>API: POST /serialization/verify {serial, barcode, lot, expiry}
+    API->>DB: vision_results PASS, status VISION_VERIFIED + event
+    Op->>API: POST /serialization/commission/{serial}
+    API->>DB: status COMMISSIONED + event
+    Op->>API: POST /serialization/aggregate {parent, children}
+    API->>DB: parent_id set, status AGGREGATED + event
+    Op->>API: GET /serialization/{serial}/events
+    API-->>Op: full history (audit)
+```
+
+### 🗄️ Data model (core tables)
+
+```mermaid
+erDiagram
+    PRODUCTS ||--o{ BATCHES : "made as"
+    BATCHES ||--o{ SERIALIZED_UNITS : serializes
+    SERIALIZED_UNITS ||--o{ SERIALIZED_UNITS : "parent_id (aggregation)"
+    SERIALIZED_UNITS ||--o{ SERIALIZATION_EVENTS : history
+    SERIALIZED_UNITS ||--o{ VISION_RESULTS : inspected
+    BATCHES ||--o{ PRODUCTION_RUNS : "runs on"
+    PACKAGING_LINES ||--o{ PRODUCTION_RUNS : hosts
+    BATCHES ||--o{ AQL_INSPECTIONS : sampled
+    AQL_PLANS ||--o{ AQL_INSPECTIONS : "rules for"
+    BATCHES ||--o{ RECONCILIATIONS : reconciled
+    BATCHES ||--o{ QA_REVIEWS : released
+    BATCHES ||--o{ DEVIATIONS : raises
+    DEVIATIONS ||--o{ CAPA_ACTIONS : "fixed by"
+    USERS ||--o{ ELECTRONIC_SIGNATURES : signs
+    USERS ||--o{ AUDIT_TRAILS : "acts in"
+    SERIALIZED_UNITS {
+        bigint id PK
+        varchar serial_number UK
+        varchar aggregation_level "UNIT CASE PALLET"
+        bigint parent_id FK
+        varchar status "CREATED to AGGREGATED"
+    }
+    VISION_RESULTS {
+        bool barcode_pass
+        bool lot_pass
+        bool expiry_pass
+        varchar decision "PASS FAIL"
+    }
+```
+
+<sub>29 tables in all (`database/schema.sql` + the phase migrations). Full ERD: [`docs/`](docs).</sub>
+
 ---
 
 ## 🛠️ Tech Stack
@@ -159,6 +292,20 @@ The backend enforces these rules, and an automated test covers each one:
 | UI tests | Selenium 4.35 (Selenium Manager) · Appium (UiAutomator2 / XCUITest) · Selenium Grid · BrowserStack |
 | Reporting | Allure 2.29 (request/response attachments, screenshots) · Cucumber HTML / JSON / JUnit XML / timeline |
 | CI / CD | GitHub Actions: test pipeline + Allure on Pages · `jpackage` desktop builds for 3 operating systems |
+
+### 🔁 CI pipeline
+
+```mermaid
+flowchart LR
+    T([push · PR · manual]) --> DB[(MySQL 8 service<br/>schema + seed + 3 migrations)]
+    DB --> B[mvn package<br/>27 unit tests]
+    B --> S[Start API :8080]
+    S --> F[Start React UI :5173]
+    F --> A[Cucumber API + UI<br/>headless Chrome · 47]
+    A --> J[JUnit API smoke · 4]
+    J --> R[Allure + Cucumber<br/>reports as artifacts]
+    R -->|main only| P[GitHub Pages<br/>live Allure report]
+```
 
 ---
 
@@ -190,6 +337,20 @@ RbcTcsWorld_PharmaPackQMS_Serialization/
 ├── pom.xml                    backend build
 └── RUNBOOK.md                 step-by-step local setup
 ```
+
+```mermaid
+pie showData title Backend code by module (1,603 lines of Java)
+    "serialization" : 551
+    "auth (JWT, roles)" : 460
+    "desktop launcher" : 119
+    "master data" : 88
+    "line (PLC)" : 84
+    "production" : 61
+    "e-signature + audit" : 91
+    "batch, product, AQL, QA, recon, deviation, CAPA, common, config" : 149
+```
+
+<sub>Frontend: 1,229 lines of TypeScript / React. Automation framework: 1,082 lines of Java.</sub>
 
 ---
 
@@ -307,9 +468,25 @@ See [`automation/README.md`](automation/README.md). For the Bangla guide with co
 | DEF-03 | Medium | Vision verification accepted a serial that had never been printed | Fixed, returns 400 |
 | DEF-04 | Medium | Print and commission were allowed while the line was STOPPED or FAULTED | Fixed, returns 409 |
 | DEF-05 | High | **START LINE** blanked the UI, because the state update dropped `devices` | Fixed, covered by a UI test |
-| DEF-06 | Low | The serialized-units table does not refresh after generating serials unless a batch is already selected | Open |
+| DEF-06 | Low | The serialized-units table did not refresh after generating serials unless that batch was already selected | Fixed, covered by a UI test |
 
-In each case the test was written first and failed (red); the fix was then verified (green).
+In each case the test was written first and failed (red); the fix was then verified (green). For DEF-06 the [red run](https://github.com/rbchy/RbcTcsWorld_PharmaPackQMS_Serialization/actions/runs/42832600541) and the [green run](https://github.com/rbchy/RbcTcsWorld_PharmaPackQMS_Serialization/actions/runs/42832986633) are both in the Actions history.
+
+```mermaid
+pie showData title 6 defects found by automation, by severity
+    "Critical (GMP)" : 1
+    "High" : 2
+    "Medium" : 2
+    "Low" : 1
+```
+
+```mermaid
+xychart-beta
+    title "Where the defects were caught"
+    x-axis ["API tests", "UI tests"]
+    y-axis "Defects" 0 --> 5
+    bar [4, 2]
+```
 
 ---
 
@@ -324,6 +501,8 @@ In each case the test was written first and failed (red); the fix was then verif
 | Line smoke test expects `RUNNING`; a new test proves a FAULT device stops the line | It accepted `RUNNING` **or** `FAULT`, so it could not fail |
 | CI runs on every branch push | It ran only on `main` and on pull requests |
 | Frontend dependencies pinned (React 19.3, Vite 8.3, TypeScript 7.0) | `package.json` asked for `latest`, so a new major release could break the build at any time |
+| **DEF-06 fixed** with a red-first UI regression test | After generating serials, the units table now switches to that batch by itself |
+| README charts: test layers, scenarios per module, test pyramid, PLC states, aggregation, API sequence, ER model, CI pipeline, code by module, defects | So the README shows the system and its quality at a glance |
 
 ---
 
@@ -338,7 +517,7 @@ In each case the test was written first and failed (red); the fix was then verif
 - [ ] JDBC-level checks of `serialized_units`, `serialization_events`, `vision_results`
 - [ ] More UI coverage: vision simulator, decommission and aggregation screens
 - [ ] Android and iOS runs in CI via BrowserStack
-- [ ] Fix DEF-06
+- [x] Fix DEF-06
 
 ---
 
