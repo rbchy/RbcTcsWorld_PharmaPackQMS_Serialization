@@ -100,6 +100,20 @@ public class UiSteps {
         assertNotNull(currentSerial, "Newest serial row has no data-serial attribute");
     }
 
+    // DEF-06 regression: the table must follow the batch on its own
+    private int expectedRows;
+
+    @When("I generate {int} serial(s) for batch {string} without choosing it in the units table")
+    public void generateOnly(int qty, String batchNumber) {
+        expectedRows = serialCountViaApi(batchNumber) + qty;
+        new SerializationPage(driver).generateSerials(batchNumber, qty);
+    }
+
+    @Then("the serialized units table shows batch {string} with the new serials")
+    public void unitsTableFollows(String batchNumber) {
+        new SerializationPage(driver).waitForUnitsTableToShow(batchNumber, expectedRows);
+    }
+
     @Then("the new serial shows status {string}")
     public void newSerialStatus(String expected) {
         assertEquals(expected, new SerializationPage(driver).waitForStatus(currentSerial, expected));

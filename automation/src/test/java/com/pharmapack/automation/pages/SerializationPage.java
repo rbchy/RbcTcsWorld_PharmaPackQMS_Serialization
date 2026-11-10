@@ -50,6 +50,14 @@ public class SerializationPage extends BasePage {
         });
     }
 
+    /** Waits (without touching the selector) until the units table shows this batch with at least {@code minRows} rows. */
+    public void waitForUnitsTableToShow(String batchNumber, int minRows) {
+        wait.until(d -> {
+            var sel = new org.openqa.selenium.support.ui.Select(driver.findElement(tid("units-batch")));
+            return sel.getFirstSelectedOption().getText().contains(batchNumber) && rows().size() >= minRows;
+        });
+    }
+
     public List<WebElement> rows() { return all("unit-row"); }
 
     /** Rows are ordered by id, so the newest serial is the last row. */

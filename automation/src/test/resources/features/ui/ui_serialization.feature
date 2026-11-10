@@ -37,3 +37,12 @@ Feature: PharmaPack QMS web UI on desktop, Windows, Android and iOS
     Then the new serial shows status "PRINTED"
     And its Print button is disabled
     And its Commission button is disabled
+
+  # DEF-06 regression: new serials used to stay invisible until the batch was picked by hand
+  Scenario: The units table shows newly generated serials without choosing the batch
+    Given I am logged in as "admin" with password "admin123"
+    And I open the Serialization screen
+    And I press START LINE
+    And the PLC state shows "RUNNING"
+    When I generate 2 serials for batch "BATCH-DEMO-001" without choosing it in the units table
+    Then the serialized units table shows batch "BATCH-DEMO-001" with the new serials
