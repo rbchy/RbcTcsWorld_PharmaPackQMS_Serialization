@@ -435,7 +435,9 @@ function App() {
         }),
       });
       notify('Serial numbers commissioned');
-      if (serialBatchId === serf.batchId) await loadSerialization(serf.batchId);
+      // DEF-06: always show the batch the serials were just generated for. The table used to
+      // refresh only when that batch was already selected, so new serials seemed to be missing.
+      await loadSerialization(serf.batchId);
     } catch (x: any) { notify(x.message, 'error'); }
   };
 
